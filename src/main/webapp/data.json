@@ -1,0 +1,26 @@
+[
+  {
+    "id": 0,
+    "author": "Dmitry Glukhovsky",
+    "name": "Metro 2033",
+    "pageNumber": 700,
+    "publishDate": "Dec 23, 2018 4:51:18 PM",
+    "updateDate": "Dec 23, 2018 4:51:18 PM"
+  },
+  {
+    "id": 1,
+    "author": "Dmitry Glukhovsky",
+    "name": "Metro 2035",
+    "pageNumber": 435,
+    "publishDate": "Dec 21, 2018 4:51:18 PM",
+    "updateDate": "Dec 21, 2018 4:51:18 PM"
+  },
+  {
+    "id": 2,
+    "author": "Dmitry Glukhovsky",
+    "name": "Metro 2034",
+    "pageNumber": 542,
+    "publishDate": "Dec 22, 2018 4:51:18 PM",
+    "updateDate": "Dec 22, 2018 4:51:18 PM"
+  }
+]
