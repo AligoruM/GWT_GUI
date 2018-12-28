@@ -11,7 +11,10 @@ import com.google.gwt.user.cellview.client.*;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.view.client.AsyncDataProvider;
+import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 
 import java.util.*;
@@ -24,14 +27,23 @@ public class MainPanel implements EntryPoint {
     private static boolean[] orders = {true, true, true, true, true};
     private final static ListDataProvider<Book> bookListDataProvider = new ListDataProvider<>();
 
-    private static DownloadLibServiceAsync downloadLibServiceAsync = GWT.create(DownloadLibService.class);
-    private static UploadLibServiceAsync UploadLibSvc = GWT.create(UploadLibService.class);
+    private static AsyncDataProvider<Book> asyncDataProvider;
+
+    private static DownloadLibServiceAsync DownloadLibServiceAsync = GWT.create(DownloadLibService.class);
     private static SortByServiceAsync SortLibServiceAsync = GWT.create(SortByService.class);
+    private static DeleteBookServiceAsync DeleteBookServiceAsync = GWT.create(DeleteBookService.class);
 
     public final static DateTimeFormat PUBLISH_DATE_FORMAT = DateTimeFormat.getFormat("dd-MM-yyyy");
     public final static DateTimeFormat UPDATE_DATE_FORMAT = DateTimeFormat.getFormat("HH:mm:ss dd-MM-yyyy");
 
     public void onModuleLoad() {
+        asyncDataProvider=new AsyncDataProvider<Book>() {
+            @Override
+            protected void onRangeChanged(HasData<Book> display) {
+                final int start = display.getVisibleRange().getStart();
+            }
+        };
+
         downloadLibrary();
         VerticalPanel mainPanel = new VerticalPanel();
         mainPanel.setBorderWidth(2);
@@ -45,44 +57,58 @@ public class MainPanel implements EntryPoint {
 
         addButton.addClickHandler(event -> new AddDialog(bookListDataProvider));
         deleteButton.addClickHandler(event -> {
-           bookListDataProvider.getList().remove(bookTable.getKeyboardSelectedRow());
-           uploadLibrary(bookListDataProvider.getList());
+            Book selected = ((SingleSelectionModel<Book>)bookTable.getSelectionModel()).getSelectedObject();
+            if(selected!=null) {
+                bookListDataProvider.getList().removeIf(e -> e.getId() == selected.getId());
+                deleteBook(selected.getId());
+                ((SingleSelectionModel<Book>) bookTable.getSelectionModel()).clear();
+            }
         });
-
-        mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-        hPanel.setSpacing(6);
-        hPanel.add(addButton);
-        hPanel.add(deleteButton);
-        mainPanel.add(hPanel);
-
+        //adding pager
+        {
+            HorizontalPanel pagerPanel = new HorizontalPanel();
+            SimplePager pager = new SimplePager();
+            pager.setDisplay(bookTable);
+            pager.setPageSize(4);
+            mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+            pagerPanel.add(pager);
+            mainPanel.add(pagerPanel);
+        }
+        //adding buttons
+        {
+            mainPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+            hPanel.setSpacing(6);
+            hPanel.add(addButton);
+            hPanel.add(deleteButton);
+            mainPanel.add(hPanel);
+        }
         RootPanel.get("Table").add(mainPanel);
     }
 
 
 
-    public static void uploadLibrary(List<Book> books){
-        if(UploadLibSvc==null){
-            UploadLibSvc=GWT.create(UploadLibService.class);
+    private static void deleteBook(int id){
+        if(DeleteBookServiceAsync==null){
+            DeleteBookServiceAsync=GWT.create(DeleteBookService.class);
         }
-
         AsyncCallback<Void> callback = new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("Upload doesnt work");
+                Window.alert("DeleteBook doesnt work");
                 caught.printStackTrace();
             }
 
             @Override
             public void onSuccess(Void result) {
-
+                Window.alert("Deleted");
             }
         };
-        UploadLibSvc.uploadBooks(new ArrayList<>(books), callback);
+        DeleteBookServiceAsync.deleteBook(id, callback);
     }
 
     private static void downloadLibrary(){
-        if (downloadLibServiceAsync == null) {
-            downloadLibServiceAsync = GWT.create(DownloadLibService.class);
+        if (DownloadLibServiceAsync == null) {
+            DownloadLibServiceAsync = GWT.create(DownloadLibService.class);
         }
         AsyncCallback<ArrayList<Book>> callback = new AsyncCallback<ArrayList<Book>>() {
             public void onFailure(Throwable caught) {
@@ -91,11 +117,13 @@ public class MainPanel implements EntryPoint {
             }
 
             public void onSuccess(ArrayList<Book> result) {
+                //Window.alert("Received " + result.get(0).toString());
+                bookListDataProvider.getList().clear();
                 bookListDataProvider.getList().addAll(result);
             }
         };
         // Make the call to the stock price service.
-        downloadLibServiceAsync.getBooks(callback);
+        DownloadLibServiceAsync.getBooks(callback);
     }
 
     public static void sortLibrary(int index){

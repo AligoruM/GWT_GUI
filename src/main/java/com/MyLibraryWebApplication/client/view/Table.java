@@ -5,10 +5,8 @@ import com.MyLibraryWebApplication.shared.Book;
 import com.MyLibraryWebApplication.client.view.dialogs.EditDialog;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.cellview.client.*;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class Table {
@@ -97,12 +95,14 @@ public class Table {
         updateDateHeader.setUpdater(value -> MainPanel.sortLibrary(4));
         table.addColumn(updateDateColumn, updateDateHeader);
 
-        final SingleSelectionModel<Book> selectionModel = new SingleSelectionModel<>();
+        ProvidesKey<Book> keyProvider = Book::getId;
+
+        final SingleSelectionModel<Book> selectionModel = new SingleSelectionModel<>(keyProvider);
         table.setSelectionModel(selectionModel);
         table.addDomHandler(event -> {
             Book selected = selectionModel.getSelectedObject();
-            if (selected != null && table.getKeyboardSelectedRow()>=0) {
-                new EditDialog(selected, MainPanel.getBookListDataProvider().getList(), table);
+            if (selected != null) {
+                new EditDialog(selected, MainPanel.getBookListDataProvider(), table);
             }
 
         }, DoubleClickEvent.getType());

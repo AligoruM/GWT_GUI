@@ -9,23 +9,51 @@
         <servlet-class>com.MyLibraryWebApplication.server.services.DownloadLibServiceImpl</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication UploadLibService</servlet-name>
-        <servlet-class>com.MyLibraryWebApplication.server.services.UploadLibServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication SortByService</servlet-name>
         <servlet-class>com.MyLibraryWebApplication.server.services.SortByServiceImpl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication GenerateIdService</servlet-name>
+        <servlet-class>com.MyLibraryWebApplication.server.services.GenerateIdServiceImpl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication UpdateBookService</servlet-name>
+        <servlet-class>com.MyLibraryWebApplication.server.services.UpdateBookServiceImpl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication DeleteBook</servlet-name>
+        <servlet-class>com.MyLibraryWebApplication.server.services.DeleteBookServiceImpl</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication AddBookService</servlet-name>
+        <servlet-class>com.MyLibraryWebApplication.server.services.AddBookServiceImpl</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>com.mySampleApplication.MySampleApplication DownloadLibService</servlet-name>
         <url-pattern>/MyLibraryWebApplication/DownloadLib</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication UploadLibService</servlet-name>
-        <url-pattern>/MyLibraryWebApplication/UploadLibService</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication SortByService</servlet-name>
         <url-pattern>/MyLibraryWebApplication/SortByService</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication GenerateIdService</servlet-name>
+        <url-pattern>/MyLibraryWebApplication/generateIdService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication UpdateBookService</servlet-name>
+        <url-pattern>/MyLibraryWebApplication/UpdateBookService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication DeleteBook</servlet-name>
+        <url-pattern>/MyLibraryWebApplication/DeleteBook</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>com.MyLibraryWebApplication.MyLibraryWebApplication AddBookService</servlet-name>
+        <url-pattern>/MyLibraryWebApplication/AddBookService</url-pattern>
+    </servlet-mapping>
+
+    <!--<welcome-file-list>
+        <welcome-file>MySampleApplication.html</welcome-file>
+    </welcome-file-list>-->
 </web-app>

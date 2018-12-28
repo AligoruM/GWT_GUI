@@ -1,7 +1,11 @@
 package com.MyLibraryWebApplication.client.view.dialogs;
 
+import com.MyLibraryWebApplication.client.services.UpdateBookService;
+import com.MyLibraryWebApplication.client.services.UpdateBookServiceAsync;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import com.MyLibraryWebApplication.client.MainPanel;
 import com.MyLibraryWebApplication.shared.Book;
@@ -9,18 +13,20 @@ import com.MyLibraryWebApplication.client.view.textFields.validators.DateValidat
 import com.MyLibraryWebApplication.client.view.textFields.validators.NotEmptyValidator;
 import com.MyLibraryWebApplication.client.view.textFields.validators.NumberValidator;
 import com.MyLibraryWebApplication.client.view.textFields.ValidationTextField;
+import com.google.gwt.view.client.ListDataProvider;
 
 import java.util.Date;
-import java.util.List;
 
 public class EditDialog extends DialogBox{
+    private UpdateBookServiceAsync UpdateBookService = GWT.create(UpdateBookService.class);
+
     private ValidationTextField nameBox = new ValidationTextField();
     private ValidationTextField authorBox = new ValidationTextField();
     private ValidationTextField pageBox = new ValidationTextField();
     private ValidationTextField publicDateBox = new ValidationTextField();
 
-    public EditDialog(Book book, List<Book> books, CellTable<Book> table) {
-        int selectedRow = table.getKeyboardSelectedRow();
+    public EditDialog(Book book, ListDataProvider<Book> dataProvider, CellTable<Book> table) {
+        int selectedRow = dataProvider.getList().indexOf(book);
         setPopupPosition(Window.getClientWidth()/2-130, Window.getClientHeight()/2-300);
         setText("Editing " +book.getName());
         setAnimationEnabled(true);
@@ -37,13 +43,13 @@ public class EditDialog extends DialogBox{
         Button ok = new Button("OK");
         ok.addClickHandler(event -> {
             if(pageBox.validate() && publicDateBox.validate() && nameBox.validate() && authorBox.validate()) {
-                books.get(selectedRow).setName(nameBox.getValue());
-                books.get(selectedRow).setAuthor(authorBox.getValue());
-                books.get(selectedRow).setPageNumber(Integer.parseInt(pageBox.getValue()));
-                books.get(selectedRow).setPublishDate(MainPanel.PUBLISH_DATE_FORMAT.parse(publicDateBox.getText()));
-                books.get(selectedRow).setUpdateDate(new Date());
+                dataProvider.getList().get(selectedRow).setName(nameBox.getValue());
+                dataProvider.getList().get(selectedRow).setAuthor(authorBox.getValue());
+                dataProvider.getList().get(selectedRow).setPageNumber(Integer.parseInt(pageBox.getValue()));
+                dataProvider.getList().get(selectedRow).setPublishDate(MainPanel.PUBLISH_DATE_FORMAT.parse(publicDateBox.getText()));
+                dataProvider.getList().get(selectedRow).setUpdateDate(new Date());
                 table.getSelectionModel().setSelected(null,false);
-                MainPanel.uploadLibrary(books);
+                updateBook(dataProvider.getList().get(selectedRow));
                 hide();
                 table.redraw();
             }
@@ -79,5 +85,23 @@ public class EditDialog extends DialogBox{
 
         setWidget(layout);
         show();
+    }
+
+    private void updateBook(Book book){
+        if (UpdateBookService == null) {
+            UpdateBookService = GWT.create(UpdateBookService.class);
+        }
+        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+            public void onFailure(Throwable caught) {
+                Window.alert("updateBook doesnt work!");
+                caught.printStackTrace();
+            }
+
+            public void onSuccess(Void result) {
+                Window.alert("Updated");
+            }
+        };
+        // Make the call to the stock price service.
+        UpdateBookService.updateBook(book, callback);
     }
 }

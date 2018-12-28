@@ -12,7 +12,10 @@
     <!-- Specify the app servlets.                   -->
     <source path="client"/>
     <source path="shared"/>
-    <servlet path="/UploadLibService" class="com.MyLibraryWebApplication.server.services.UploadLibServiceImpl"/>
     <servlet path="/DownloadLib" class="com.MyLibraryWebApplication.server.services.DownloadLibServiceImpl"/>
     <servlet path="/SortByService" class="com.MyLibraryWebApplication.server.services.SortByServiceImpl"/>
+    <servlet path="/generateIdService" class="com.MyLibraryWebApplication.server.services.GenerateIdServiceImpl"/>
+    <servlet path="/UpdateBookService" class="com.MyLibraryWebApplication.server.services.UpdateBookServiceImpl"/>
+    <servlet path="/DeleteBook" class="com.MyLibraryWebApplication.server.services.DeleteBookServiceImpl"/>
+    <servlet path="/AddBookService" class="com.MyLibraryWebApplication.server.services.AddBookServiceImpl"/>
 </module>
